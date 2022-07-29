@@ -93,23 +93,31 @@ def get_username():
 
 username = get_username()
 
+# def get_gpu():
+#     gpu = subprocess.run(['system_profiler', 'SPDisplaysDataType', "|", "grep", "'Chipset Model'"], capture_output=True)
+#     stdout = gpu.stdout.decode('ascii')
+#     for line in stdout.splitlines():
+#         if 'Chipset Model:' in line:
+#             chipset = line.split('Chipset Model: ')[1]
+#     return chipset
+
 def get_gpu():
-    gpu = subprocess.run(['system_profiler', 'SPDisplaysDataType', "|", "grep", "'Chipset Model'"], capture_output=True)
-    stdout = gpu.stdout.decode('ascii')
-    for line in stdout.splitlines():
-        if 'Chipset Model:' in line:
-            chipset = line.split('Chipset Model: ')[1]
-    return chipset
+    with os.popen("system_profiler SPDisplaysDataType | grep 'Chipset' | awk '{print $3, $4, $5, $6}'") as gpu:
+        return gpu.read().strip()
     
 gpu = get_gpu()
 
+# def get_resolution():
+#     resolution = subprocess.run(['system_profiler', 'SPDisplaysDataType', "|", "grep", "'UI Looks like'"], capture_output=True)
+#     stdout = resolution.stdout.decode('ascii')
+#     for line in stdout.splitlines():
+#         if 'UI Looks like:' in line:
+#             res = line.split('UI Looks like: ')[1]
+#     return res
+
 def get_resolution():
-    resolution = subprocess.run(['system_profiler', 'SPDisplaysDataType', "|", "grep", "'UI Looks like'"], capture_output=True)
-    stdout = resolution.stdout.decode('ascii')
-    for line in stdout.splitlines():
-        if 'UI Looks like:' in line:
-            res = line.split('UI Looks like: ')[1]
-    return res
+    with os.popen("system_profiler SPDisplaysDataType | grep UI | xargs | awk '{print $4, $5, $6, $7, $8}'") as resolution:
+        return resolution.read().strip()
     
 res = get_resolution()
 
